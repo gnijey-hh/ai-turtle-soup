@@ -187,9 +187,24 @@ const askKimi = async (question, story) => {
 
 loadLocalEnv()
 
+const ALLOWED_ORIGIN_PATTERNS = [
+  /^http:\/\/127\.0\.0\.1:5173$/,
+  /^http:\/\/localhost:5173$/,
+  /^https:\/\/ai-turtle-soup-dun\.vercel\.app$/,
+  /^https:\/\/ai-turtle-soup-git-main-gnijey-hhs-projects\.vercel\.app$/,
+  /^https:\/\/ai-turtle-soup-[a-z0-9-]+-gnijey-hhs-projects\.vercel\.app$/,
+]
+
 app.use(
   cors({
-    origin: ['http://127.0.0.1:5173', 'http://localhost:5173'],
+    origin(origin, callback) {
+      if (!origin || ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin))) {
+        callback(null, true)
+        return
+      }
+
+      callback(new Error('Not allowed by CORS'))
+    },
   }),
 )
 app.use(express.json())

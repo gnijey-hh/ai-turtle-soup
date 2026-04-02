@@ -5,7 +5,8 @@ type TChatResponse = {
   error?: string
 }
 
-const CHAT_API_URL = '/api/chat'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.trim()
+const CHAT_API_URL = API_BASE_URL ? `${API_BASE_URL}/api/chat` : '/api/chat'
 
 const normalizeAnswer = (content: string) => {
   const trimmedContent = content.trim()
@@ -33,7 +34,7 @@ const toFriendlyError = (message: string) => {
     lowerMessage.includes('networkerror') ||
     lowerMessage.includes('network error')
   ) {
-    return '无法连接到后端服务，请确认 http://localhost:3000 已正常启动。'
+    return '无法连接到后端服务，请稍后重试。'
   }
 
   if (
