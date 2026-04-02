@@ -65,7 +65,7 @@ export function ChatBox({
       <div className="relative z-10 mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-stone-100">对话记录</h2>
-          <p className="text-sm text-stone-400">AI 只会回复“是”、“否”或“无关”</p>
+          <p className="text-sm text-stone-400">AI 通常只会回复“是”“否”或“无关”，完整猜中时会直接恭喜你。</p>
         </div>
         <div className="flex items-center gap-2 self-start sm:self-auto">
           {isLoading ? (

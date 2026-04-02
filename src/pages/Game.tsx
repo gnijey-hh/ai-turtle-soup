@@ -18,6 +18,56 @@ const STATUS_LABELS: Record<TGameStatus, string> = {
   abandoned: '已放弃',
 }
 
+const normalizeGuessText = (value: string) =>
+  value.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase()
+
+const getLongestCommonSubstringLength = (source: string, target: string) => {
+  if (!source || !target) {
+    return 0
+  }
+
+  const matrix = Array.from({ length: source.length + 1 }, () =>
+    Array<number>(target.length + 1).fill(0),
+  )
+  let longest = 0
+
+  for (let i = 1; i <= source.length; i += 1) {
+    for (let j = 1; j <= target.length; j += 1) {
+      if (source[i - 1] !== target[j - 1]) {
+        continue
+      }
+
+      matrix[i][j] = matrix[i - 1][j - 1] + 1
+      if (matrix[i][j] > longest) {
+        longest = matrix[i][j]
+      }
+    }
+  }
+
+  return longest
+}
+
+const isSolvedGuess = (question: string, story: Story) => {
+  const normalizedQuestion = normalizeGuessText(question)
+  const normalizedBottom = normalizeGuessText(story.bottom)
+  const normalizedSurface = normalizeGuessText(story.surface)
+
+  if (normalizedQuestion.length < 6) {
+    return false
+  }
+
+  const longestBottomMatch = getLongestCommonSubstringLength(normalizedQuestion, normalizedBottom)
+  const longestSurfaceMatch = getLongestCommonSubstringLength(normalizedQuestion, normalizedSurface)
+  const bottomMatchRatio =
+    longestBottomMatch / Math.max(1, Math.min(normalizedQuestion.length, normalizedBottom.length))
+
+  return (
+    longestBottomMatch >= 6 &&
+    bottomMatchRatio >= 0.42 &&
+    longestBottomMatch > longestSurfaceMatch
+  )
+}
+
 const getStatusStorageKey = (storyId: string) => `turtle-status:${storyId}`
 
 export function Game() {
@@ -63,11 +113,27 @@ export function Game() {
 
     try {
       const answer = await askAI(content, story)
+      const solved = answer === '是' && isSolvedGuess(content, story)
       const assistantMessage: TMessage = {
         id: `assistant-${crypto.randomUUID()}`,
         role: 'assistant',
         content: answer,
         timestamp: timestamp + 1,
+      }
+
+      if (solved) {
+        const celebrationMessage: TMessage = {
+          id: `assistant-win-${crypto.randomUUID()}`,
+          role: 'assistant',
+          content: '恭喜你，答对了！你已经还原出这个故事，可以直接查看汤底了。',
+          timestamp: timestamp + 2,
+        }
+        const nextStatus: TGameStatus = 'ended'
+
+        sessionStorage.setItem(getStatusStorageKey(story.id), nextStatus)
+        setGameStatus(nextStatus)
+        setMessages((currentMessages) => [...currentMessages, assistantMessage, celebrationMessage])
+        return
       }
 
       setMessages((currentMessages) => [...currentMessages, assistantMessage])
