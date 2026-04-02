@@ -52,7 +52,7 @@ const isSolvedGuess = (question: string, story: Story) => {
   const normalizedBottom = normalizeGuessText(story.bottom)
   const normalizedSurface = normalizeGuessText(story.surface)
 
-  if (normalizedQuestion.length < 6) {
+  if (normalizedQuestion.length < 2) {
     return false
   }
 
@@ -60,11 +60,13 @@ const isSolvedGuess = (question: string, story: Story) => {
   const longestSurfaceMatch = getLongestCommonSubstringLength(normalizedQuestion, normalizedSurface)
   const bottomMatchRatio =
     longestBottomMatch / Math.max(1, Math.min(normalizedQuestion.length, normalizedBottom.length))
+  const isDirectBottomFragment =
+    normalizedQuestion.length >= 4 && normalizedBottom.includes(normalizedQuestion)
 
   return (
-    longestBottomMatch >= 6 &&
-    bottomMatchRatio >= 0.42 &&
-    longestBottomMatch > longestSurfaceMatch
+    (isDirectBottomFragment ||
+      (longestBottomMatch >= 4 && bottomMatchRatio >= 0.42 && longestBottomMatch > longestSurfaceMatch)) &&
+    longestBottomMatch > 0
   )
 }
 
