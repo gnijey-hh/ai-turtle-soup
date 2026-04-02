@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Alibaba PuHuiTi Home';
+  src: url('./assets/fonts/Alibaba_PuHuiTi_2.0_105_Heavy_105_Heavy.woff2')
+    format('woff2');
+  font-display: swap;
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: 'Cinzel Home';
+  src: url('./assets/fonts/Cinzel-VariableFont_wght.woff2') format('woff2');
+  font-display: swap;
+  font-weight: 400 700;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC Home';
+  src: url('./assets/fonts/NotoSansSC-VariableFont_wght.woff2') format('woff2');
+  font-display: swap;
+  font-weight: 100 900;
+}
+
+@layer base {
+  :root {
+    color: #e7ece8;
+    background:
+      radial-gradient(circle at top, rgba(82, 247, 166, 0.12), transparent 30%),
+      linear-gradient(180deg, #06110d 0%, #081813 45%, #040806 100%);
+    font-family:
+      'Noto Sans SC Home', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei',
+      ui-sans-serif, sans-serif;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-height: 100%;
+    background-color: #040806;
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(82, 247, 166, 0.08), transparent 18%),
+      radial-gradient(circle at 80% 0%, rgba(245, 158, 11, 0.08), transparent 20%),
+      linear-gradient(180deg, rgba(4, 17, 13, 0.96), rgba(4, 8, 6, 1));
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(152, 255, 208, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(152, 255, 208, 0.03) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(circle at center, black, transparent 85%);
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  @keyframes float-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      opacity: 0.45;
+      transform: scale(0.98);
+    }
+
+    50% {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+  }
+
+  .animate-float-in {
+    animation: float-in 220ms ease-out;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 1.8s ease-in-out infinite;
+  }
+
+  .mask-fade-bottom {
+    mask-image: linear-gradient(to bottom, black 78%, transparent 100%);
+  }
+
+  .font-home-display {
+    font-family:
+      'Alibaba PuHuiTi Home', 'Noto Sans SC Home', 'Microsoft YaHei', sans-serif;
+  }
+
+  .font-home-english {
+    font-family: 'Cinzel Home', Georgia, serif;
+  }
+}
