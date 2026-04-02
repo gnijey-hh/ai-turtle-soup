@@ -88,6 +88,7 @@ export function Result() {
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
         <Link
           className="rounded-lg bg-emerald-400 px-5 py-3 text-center text-sm font-semibold text-stone-950 transition hover:bg-emerald-300"
+          state={{ view: 'lobby' }}
           to="/"
         >
           再来一局

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import enterImg from '../assets/home/Enter.webp'
+import gameTitleImg from '../assets/home/game.webp'
 import homeBg from '../assets/home/home.webp'
 import iconImg from '../assets/home/icon.webp'
 import squareImg from '../assets/home/square.webp'
@@ -10,6 +11,7 @@ import type { TGameStatus } from '../types/game'
 
 type THomeLocationState = {
   status?: TGameStatus
+  view?: THomeView
 }
 
 type THomeView = 'hero' | 'lobby'
@@ -29,7 +31,7 @@ export function Home() {
   const location = useLocation()
   const state = (location.state as THomeLocationState | null) ?? null
   const lastStatus = state?.status
-  const [view, setView] = useState<THomeView>('hero')
+  const [view, setView] = useState<THomeView>(state?.view === 'lobby' ? 'lobby' : 'hero')
 
   const counts = useMemo(
     () => ({
@@ -46,20 +48,23 @@ export function Home() {
         <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top,rgba(82,247,166,0.14),transparent_55%)]" />
 
         <section className="relative animate-float-in">
-          <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-            <div>
+          <div className="mb-6 flex flex-col gap-5">
+            <div className="text-center">
               <p className="text-sm uppercase tracking-[0.42em] text-emerald-300/60">
                 Story Selection
               </p>
-              <h1 className="mt-2 text-3xl font-semibold text-stone-100 sm:text-4xl">
-                游戏大厅
-              </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-7 text-stone-400">
+              <img
+                alt="游戏大厅"
+                className="mx-auto mt-4 h-auto w-[280px] max-w-full object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.46)] sm:w-[340px] lg:w-[420px]"
+                draggable="false"
+                src={gameTitleImg}
+              />
+              <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-stone-400">
                 从轻松试探到烧脑谜案，任选一个故事，立刻开始推理。
               </p>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center">
               <div className="rounded-lg border border-emerald-400/15 bg-emerald-400/6 px-4 py-3 text-sm text-emerald-200/90">
                 当前共 <span className="font-semibold text-stone-100">{stories.length}</span>{' '}
                 个故事，点击任意卡片即可开局

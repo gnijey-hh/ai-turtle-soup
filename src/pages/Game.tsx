@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { askAI } from '../api'
+import turtleImage from '../assets/effects/turtle.webp'
 import { ChatBox } from '../components/ChatBox'
 import { getStoryById } from '../data/stories'
 import type { Story, TGameStatus, TMessage } from '../types/game'
@@ -72,9 +73,7 @@ export function Game() {
       setMessages((currentMessages) => [...currentMessages, assistantMessage])
     } catch (error) {
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : 'AI 调用失败，请检查网络和配置。',
+        error instanceof Error ? error.message : 'AI 调用失败，请检查网络和配置。',
       )
     } finally {
       setIsLoading(false)
@@ -101,33 +100,46 @@ export function Game() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-      <section className="rounded-lg border border-emerald-400/20 bg-black/35 p-5 shadow-lg shadow-emerald-950/25 transition duration-300 sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
+      <section className="relative overflow-hidden rounded-lg border border-emerald-400/20 bg-black/35 p-3.5 shadow-lg shadow-emerald-950/25 transition duration-300 sm:p-4">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 bg-center bg-cover bg-no-repeat opacity-50"
+          style={{ backgroundImage: `url(${turtleImage})` }}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(90deg,rgba(3,9,7,0.88)_0%,rgba(3,9,7,0.74)_48%,rgba(3,9,7,0.58)_100%)]"
+        />
+        <div className="relative z-10 flex flex-col gap-2.5 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-3xl">
-            <p className="text-sm uppercase tracking-[0.45em] text-emerald-300/70">
-              当前故事
-            </p>
-            <h1 className="mt-3 text-3xl font-semibold text-stone-50 sm:text-4xl">
-              {story.title}
-            </h1>
-            <p className="mt-4 text-sm leading-7 text-stone-300/90 sm:text-base">
-              {story.surface}
-            </p>
+            <p className="text-xs uppercase tracking-[0.35em] text-emerald-300/70">当前故事</p>
+            <div className="mt-1.5">
+              <h1 className="story-title font-home-display text-[1.75rem] font-semibold leading-tight sm:text-[2rem]">
+                <span aria-hidden="true" className="story-title__trail story-title__trail--far">
+                  {story.title}
+                </span>
+                <span aria-hidden="true" className="story-title__trail story-title__trail--mid">
+                  {story.title}
+                </span>
+                <span className="story-title__text">{story.title}</span>
+              </h1>
+            </div>
+            <p className="mt-2 text-sm leading-5 text-stone-300/90">{story.surface}</p>
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <div className="rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-2 text-xs font-medium text-amber-300 transition duration-200 hover:bg-amber-400/15">
-              难度 {DIFFICULTY_LABELS[story.difficulty]}
+            <div className="rounded-full border border-amber-400/30 bg-amber-400/10 px-3.5 py-1.5 text-xs font-medium text-amber-300 transition duration-200 hover:bg-amber-400/15">
+              {DIFFICULTY_LABELS[story.difficulty]}
             </div>
-            <div className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-xs font-medium text-emerald-300 transition duration-200 hover:bg-emerald-400/15">
-              状态 {STATUS_LABELS[gameStatus]}
+            <div className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3.5 py-1.5 text-xs font-medium text-emerald-300 transition duration-200 hover:bg-emerald-400/15">
+              {STATUS_LABELS[gameStatus]}
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mt-6">
+      <section className="mt-3">
         <ChatBox
           disabled={gameStatus !== 'playing'}
           errorMessage={errorMessage}
@@ -137,7 +149,7 @@ export function Game() {
         />
       </section>
 
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-end">
         <button
           className="rounded-lg border border-amber-400/50 bg-amber-400/10 px-5 py-3 text-sm font-semibold text-amber-300 transition duration-200 hover:-translate-y-px hover:bg-amber-400/20 hover:shadow-lg hover:shadow-amber-950/25"
           onClick={handleReveal}
@@ -154,6 +166,7 @@ export function Game() {
         </button>
         <Link
           className="rounded-lg border border-rose-400/35 bg-rose-500/10 px-5 py-3 text-center text-sm font-semibold text-rose-200 transition duration-200 hover:-translate-y-px hover:bg-rose-500/20 hover:shadow-lg hover:shadow-rose-950/25"
+          state={{ view: 'lobby' }}
           to="/"
         >
           返回大厅

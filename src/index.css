@@ -129,4 +129,46 @@
   .font-home-english {
     font-family: 'Cinzel Home', Georgia, serif;
   }
+
+  .story-title {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    color: #9cfcc3;
+    letter-spacing: 0.04em;
+    isolation: isolate;
+  }
+
+  .story-title__text {
+    position: relative;
+    z-index: 3;
+    color: #7cffb2;
+    text-shadow:
+      0 0 10px rgba(76, 255, 161, 0.72),
+      0 0 24px rgba(76, 255, 161, 0.4),
+      0 0 42px rgba(17, 83, 48, 0.45);
+  }
+
+  .story-title__trail {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+    filter: blur(0.4px);
+  }
+
+  .story-title__trail--mid {
+    z-index: 2;
+    color: rgba(123, 255, 186, 0.28);
+    transform: translate(12px, 1px);
+    text-shadow: 0 0 16px rgba(76, 255, 161, 0.2);
+  }
+
+  .story-title__trail--far {
+    z-index: 1;
+    color: rgba(183, 255, 215, 0.12);
+    transform: translate(24px, 2px);
+    text-shadow: 0 0 20px rgba(76, 255, 161, 0.14);
+  }
 }
