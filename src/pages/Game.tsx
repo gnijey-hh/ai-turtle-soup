@@ -21,6 +21,77 @@ const STATUS_LABELS: Record<TGameStatus, string> = {
 const normalizeGuessText = (value: string) =>
   value.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase()
 
+const GUESS_PREFIXES = [
+  '答案是',
+  '答案应该是',
+  '应该是',
+  '会不会是',
+  '是不是',
+  '难道是',
+  '所以是',
+  '其实是',
+  '我猜是',
+]
+
+const GUESS_SUBJECTS = [
+  '我',
+  '他',
+  '她',
+  '它',
+  '死者',
+  '凶手',
+  '兇手',
+  '这个人',
+  '这个东西',
+  '故事里的人',
+  '故事里的东西',
+]
+
+const GUESS_MEASURE_WORDS = [
+  '一只',
+  '一个',
+  '一位',
+  '一名',
+  '一条',
+  '一头',
+  '一把',
+  '一台',
+  '一张',
+  '一双',
+  '一场',
+  '一件',
+]
+
+const stripLeadingTerm = (value: string, terms: string[]) => {
+  let strippedValue = value
+  let hasChanged = true
+
+  while (hasChanged) {
+    hasChanged = false
+
+    for (const term of terms) {
+      if (strippedValue.startsWith(term)) {
+        strippedValue = strippedValue.slice(term.length)
+        hasChanged = true
+      }
+    }
+  }
+
+  return strippedValue
+}
+
+const extractGuessCore = (value: string) => {
+  let normalizedValue = normalizeGuessText(value)
+
+  normalizedValue = stripLeadingTerm(normalizedValue, GUESS_PREFIXES)
+  normalizedValue = stripLeadingTerm(normalizedValue, GUESS_SUBJECTS)
+  normalizedValue = stripLeadingTerm(normalizedValue, ['是', '就是'])
+  normalizedValue = stripLeadingTerm(normalizedValue, GUESS_MEASURE_WORDS)
+  normalizedValue = normalizedValue.replace(/[吧吗呢呀啊啦哦了]+$/u, '')
+
+  return normalizedValue
+}
+
 const getLongestCommonSubstringLength = (source: string, target: string) => {
   if (!source || !target) {
     return 0
@@ -51,9 +122,26 @@ const isSolvedGuess = (question: string, story: Story) => {
   const normalizedQuestion = normalizeGuessText(question)
   const normalizedBottom = normalizeGuessText(story.bottom)
   const normalizedSurface = normalizeGuessText(story.surface)
+  const coreQuestion = extractGuessCore(question)
+  const coreBottom = extractGuessCore(story.bottom)
 
   if (normalizedQuestion.length < 2) {
     return false
+  }
+
+  if (coreQuestion.length >= 2 && coreBottom.length >= 2) {
+    const shortestCoreLength = Math.min(coreQuestion.length, coreBottom.length)
+    const longestCoreMatch = getLongestCommonSubstringLength(coreQuestion, coreBottom)
+    const coreMatchRatio = longestCoreMatch / Math.max(1, shortestCoreLength)
+    const isCoreFragmentMatch =
+      coreBottom.includes(coreQuestion) || coreQuestion.includes(coreBottom)
+
+    if (
+      isCoreFragmentMatch ||
+      (longestCoreMatch >= Math.min(4, shortestCoreLength) && coreMatchRatio >= 0.72)
+    ) {
+      return true
+    }
   }
 
   const longestBottomMatch = getLongestCommonSubstringLength(normalizedQuestion, normalizedBottom)
