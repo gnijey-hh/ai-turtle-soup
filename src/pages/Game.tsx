@@ -62,6 +62,8 @@ const GUESS_MEASURE_WORDS = [
   '一件',
 ]
 
+const SEMANTIC_FILLER_CHARS = /[的了着过]/gu
+
 const stripLeadingTerm = (value: string, terms: string[]) => {
   let strippedValue = value
   let hasChanged = true
@@ -87,6 +89,7 @@ const extractGuessCore = (value: string) => {
   normalizedValue = stripLeadingTerm(normalizedValue, GUESS_SUBJECTS)
   normalizedValue = stripLeadingTerm(normalizedValue, ['是', '就是'])
   normalizedValue = stripLeadingTerm(normalizedValue, GUESS_MEASURE_WORDS)
+  normalizedValue = normalizedValue.replace(SEMANTIC_FILLER_CHARS, '')
   normalizedValue = normalizedValue.replace(/[吧吗呢呀啊啦哦了]+$/u, '')
 
   return normalizedValue
